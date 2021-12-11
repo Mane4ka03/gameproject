@@ -11,7 +11,7 @@ pygame.display.set_caption('игра ') #название игры(назван�
 
 #Загружу необходимые изображения для игры:
 
-background = pygame.image.load('фон1.png')
+background = pygame.image.load('background.png')
 
 
 
