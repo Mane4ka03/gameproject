@@ -107,7 +107,7 @@ def score_display(game_state): # функция подсчета счета
         screen.blit(score_surface, score_rect)
 
         high_score_surface = game_font.render(f'Лучший счет игры: {int(high_score)}', True, (100, 0, 0)) # полсчет лучшего счета
-        high_score_rect = high_score_surface.get_rect(center=(280, 1001))
+        high_score_rect = high_score_surface.get_rect(center=(280, 100))
         screen.blit(high_score_surface, high_score_rect)
 
 
