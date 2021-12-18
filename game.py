@@ -1,5 +1,6 @@
 import pygame, sys, random #импортирую необходимые библиотеки
 
+
 pygame.display.set_caption('Flappy bird') #создаем название рабочего окна
 pygame.init()  #запуск рабочего окна
 screen = pygame.display.set_mode((580, 1000)) # создание рабочего окна
@@ -24,13 +25,13 @@ bird_upflap = pygame.transform.scale2x(pygame.image.load('bird1.png').convert_al
 bird_frames = [bird_downflap, bird_midflap, bird_upflap] # создание листа, где будут хранится состояния птицы для анимации
 bird_index = 0
 birds = bird_frames[bird_index]
-birdr = birds.get_rect(center=(90, 512))
+birdr = birds.get_rect(center=(90, 500))
 
 birdfl = pygame.USEREVENT + 1
 pygame.time.set_timer(birdfl, 200)
 
 
-message_r = message.get_rect(center=(288, 512)) #расположение итогового окна
+message_r = message.get_rect(center=(288, 500)) #расположение итогового окна
 tubesu = pygame.transform.scale2x(tubesu)
 tubel = []
 sptube = pygame.USEREVENT
@@ -43,12 +44,21 @@ tube_height = [500, 700, 800] #доступные высоты располож�
 eventscore = pygame.USEREVENT + 2
 pygame.time.set_timer(eventscore, 100)
 
-def rotate_bird(bird):       #вращение птички
+def rotate_bird(bird):
+    """
+    вращение птички
+    :param bird:
+    :return: расположение квадрата птицы
+    """
     #new_bird - расположение квадрата птицы
     new_bird = pygame.transform.rotozoom(bird, -birdmov * 5, 1)
     return new_bird
 
 def create_tube():
+    """
+
+    :return: позиция нижней трубы, позиция верхней трубы
+    """
     # bottom tube - позиция нижней трубы
     # top_tube - позиция верхней трубы
     _tube_pos = random.choice(tube_height) #выбираем рандомную позицию для трубы
@@ -57,15 +67,24 @@ def create_tube():
     return bottom_tube, top_tube
 
 
-def moving_tube(tubes): #функция отвечающая за передвижение труб
-    # visible_tubes - движение трубы
+def moving_tube(tubes):
+    """
+    функция отвечающая за передвижение труб
+    :param tubes: создающиеся трубы
+    :return: движение трубы
+    """
     for tube in tubes:
         tube.centerx -= 5
     visible_tubes = [tube for tube in tubes if tube.right > -50]
     return visible_tubes
 
 
-def print_tubes(tubes):  #отрисовка труб
+def print_tubes(tubes):
+    """
+    отрисовка труб
+    :param tubes: создающиеся трубы
+    :return: перевернутая труба(нижняя) ,
+    """
     for tube in tubes:
         if tube.bottom >= 1000:
             screen.blit(tubesu, tube)
@@ -74,7 +93,12 @@ def print_tubes(tubes):  #отрисовка труб
             screen.blit(flip_tube, tube)
 
 
-def check(tubes):    #если птица сталкивается с трубой
+def check(tubes):
+    """
+    если птица сталкивается с трубой
+    :param tubes: трубы
+    :return: падение птицы при столкновении или выход за рамки
+    """
     global can_score
     for tube in tubes:
         if birdr.colliderect(tube):
@@ -88,7 +112,11 @@ def check(tubes):    #если птица сталкивается с трубо
     return True
 
 
-def bird_animation():         #смена картинок птицы для анимации
+def bird_animation():
+    """
+    смена картинок птицы для анимации
+    :return: картинку новой птицы , расположение птицы
+    """
     # new_bird - картинка птицы
     #new_birdr - расположение картинки птицы
     new_bird = bird_frames[bird_index]
@@ -96,7 +124,12 @@ def bird_animation():         #смена картинок птицы для а�
     return new_bird, new_birdr
 
 
-def score_display(game_state): # функция подсчета счета
+def score_display(game_state):
+    """
+    функция подсчета счета
+    :param game_state: ситуация игры
+    :return: принт от текущего счета
+    """
     if game_state == 'main_game':
         score_surface = game_font.render(f'Текущий счет:{int(score)}', True, (100, 0, 0))  #подсчет счета в самой игре и выбор цвета
         score_rect = score_surface.get_rect(center=(280, 100)) #расположение счета
@@ -111,14 +144,24 @@ def score_display(game_state): # функция подсчета счета
         screen.blit(high_score_surface, high_score_rect)
 
 
-def new_score(score, high_score):  #функция обновления счета
+def new_score(score, high_score):
+    """
+    функция обновления счета
+    :param score: текущий счет
+    :param high_score: лучший счет
+    :return: лучший счет
+    """
     # hight_score - обновление лучшего счета
     if score > high_score:    #если текущий счет игры становится больше чем лучший счет, то он обновляется
         high_score = score
     return high_score
 
 
-def tube_check():            #функция проверки счета и его увеличения при пролетании трубы
+def tube_check():
+    """
+    функция проверки счета и его увеличения при пролетании трубы
+    :return:увеличение счета при пролетании трубы
+    """
     global score, can_score
 
     if tubel:
@@ -129,58 +172,60 @@ def tube_check():            #функция проверки счета и ег
             if tube.centerx < 0:
                 can_score = True
 
-while True:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
-        if event.type == pygame.KEYDOWN:              #если зажата клавиша
-            if event.key == pygame.K_SPACE and game_active:
-                birdmov = 0
-                birdmov -= 7
-            if event.key == pygame.K_SPACE and game_active == False:
-                game_active = True
-                tubel.clear()
-                birdr.center = (100, 512)
-                birdmov = 0
-                score = 0
 
-        if event.type == sptube:
-            tubel.extend(create_tube())
+if __name__ == "__main__":
 
-        if event.type == birdfl:
-            if bird_index < 2:
-                bird_index += 1
-            else:
-                bird_index = 0
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.KEYDOWN:              #если зажата клавиша
+                if event.key == pygame.K_SPACE and game_active:
+                    birdmov = 0
+                    birdmov -= 7
+                if event.key == pygame.K_SPACE and game_active == False:
+                    game_active = True
+                    tubel.clear()
+                    birdr.center = (100, 512)
+                    birdmov = 0
+                    score = 0
 
-            birds, birdr = bird_animation()
+            if event.type == sptube:
+                tubel.extend(create_tube())
 
-    screen.blit(bg, (0, 0))
+            if event.type == birdfl:
+                if bird_index < 2:
+                    bird_index += 1
+                else:
+                    bird_index = 0
 
-    if game_active:
+                birds, birdr = bird_animation()
 
-        birdmov += gravity               #физические составляющие игры
-        rotated_bird = rotate_bird(birds)
-        birdr.centery += birdmov
-        screen.blit(rotated_bird, birdr)
+        screen.blit(bg, (0, 0))
 
-        game_active = check(tubel)
+        if game_active:
 
+            birdmov += gravity               #физические составляющие игры
+            rotated_bird = rotate_bird(birds)
+            birdr.centery += birdmov
+            screen.blit(rotated_bird, birdr)
 
-        tubel = moving_tube(tubel)
-        print_tubes(tubel)
-
-
-        tube_check()
-        score_display('main_game')
-    else:
-        screen.blit(message, message_r)
-        high_score = new_score(score, high_score)
-        score_display('game_over')
+            game_active = check(tubel)
 
 
-    pygame.display.update()  #обновление экрана игры
-    clock.tick(130) #кол-во кадров в секунду
+            tubel = moving_tube(tubel)
+            print_tubes(tubel)
 
+
+            tube_check()
+            score_display('main_game')
+        else:
+            screen.blit(message, message_r)
+            high_score = new_score(score, high_score)
+            score_display('game_over')
+
+
+        pygame.display.update()  #обновление экрана игры
+        clock.tick(130) #кол-во кадров в секунду
 
