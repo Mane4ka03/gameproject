@@ -6,8 +6,6 @@ screen = pygame.display.set_mode((580, 1000)) # создание рабочег�
 clock = pygame.time.Clock()
 game_font = pygame.font.SysFont('Colibli', 60) #шрифт игры
 
-
-
 gravity = 0.25   #гравитация птички
 birdmov = 0 #движение пртицы
 game_active = True
@@ -46,10 +44,13 @@ eventscore = pygame.USEREVENT + 2
 pygame.time.set_timer(eventscore, 100)
 
 def rotate_bird(bird):       #вращение птички
+    #new_bird - расположение квадрата птицы
     new_bird = pygame.transform.rotozoom(bird, -birdmov * 5, 1)
     return new_bird
 
 def create_tube():
+    # bottom tube - позиция нижней трубы
+    # top_tube - позиция верхней трубы
     _tube_pos = random.choice(tube_height) #выбираем рандомную позицию для трубы
     bottom_tube = tubesu.get_rect(midtop=(600, _tube_pos))
     top_tube = tubesu.get_rect(midbottom=(600, _tube_pos - 300)) #создание расстояния между трубами
@@ -57,6 +58,7 @@ def create_tube():
 
 
 def moving_tube(tubes): #функция отвечающая за передвижение труб
+    # visible_tubes - движение трубы
     for tube in tubes:
         tube.centerx -= 5
     visible_tubes = [tube for tube in tubes if tube.right > -50]
@@ -87,6 +89,8 @@ def check(tubes):    #если птица сталкивается с трубо
 
 
 def bird_animation():         #смена картинок птицы для анимации
+    # new_bird - картинка птицы
+    #new_birdr - расположение картинки птицы
     new_bird = bird_frames[bird_index]
     new_birdr = new_bird.get_rect(center=(100, birdr.centery))
     return new_bird, new_birdr
@@ -108,6 +112,7 @@ def score_display(game_state): # функция подсчета счета
 
 
 def new_score(score, high_score):  #функция обновления счета
+    # hight_score - обновление лучшего счета
     if score > high_score:    #если текущий счет игры становится больше чем лучший счет, то он обновляется
         high_score = score
     return high_score
